@@ -43,7 +43,7 @@ async (req, res) => {
     req.app.locals.auth =
       oauth2Client;
 
-res.redirect('/dashboard.html');
+res.redirect('/dashboard');
 
   } catch (error) {
 
