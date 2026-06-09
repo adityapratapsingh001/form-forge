@@ -99,7 +99,7 @@ async (req, res) => {
 
     const googleType =
       getQuestionType(type);
-s
+
     const requests =
       parsedQuestions.map(
         (q, index) => ({
