@@ -69,6 +69,10 @@ async (req, res) => {
         version: 'v1',
         auth
       });
+      console.log(
+  'TOKEN:',
+  JSON.parse(token)
+);
     const form =
       await forms.forms.create({
         requestBody: {
@@ -141,11 +145,12 @@ async (req, res) => {
     );
 
     res.status(500)
-      .json({
-        success: false,
-        error:
-          error.message
-      });
+.json({
+  success: false,
+  error:
+    error.response?.data
+    || error.message
+});
   }
 };
 
