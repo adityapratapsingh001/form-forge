@@ -35,7 +35,16 @@ btn.addEventListener(
           'result'
         );
 
-    // Validation
+    // Login check
+    if (!token) {
+
+      result.innerHTML =
+        'Please login again';
+
+      return;
+    }
+
+    // Questions validation
     if (!questions.trim()) {
 
       result.innerHTML =
@@ -62,8 +71,9 @@ btn.addEventListener(
 
             body:
               JSON.stringify({
+
                 text:
-                  questions, // FIXED
+                  questions,
 
                 type,
 
@@ -88,17 +98,31 @@ btn.addEventListener(
 
       } else {
 
+        // Better error handling
+        const errorMessage =
+          typeof data.error
+          === 'object'
+
+            ? JSON.stringify(
+                data.error,
+                null,
+                2
+              )
+
+            : data.error;
+
         result.innerHTML =
-          data.error ||
-          'Error creating form';
+          errorMessage
+          || 'Error creating form';
       }
 
     } catch (error) {
 
-      console.error(error);
+      console.error(
+        error
+      );
 
       result.innerHTML =
         'Something went wrong';
     }
-
   });

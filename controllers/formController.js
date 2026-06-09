@@ -4,9 +4,6 @@ require('googleapis');
 const parseQuestions =
 require('../utils/parser');
 
-// -----------------------------
-// Question type mapping
-// -----------------------------
 function getQuestionType(type) {
 
   const map = {
@@ -15,8 +12,10 @@ function getQuestionType(type) {
     Dropdown: 'DROP_DOWN'
   };
 
-  return map[type] || 'RADIO';
+  return map[type]
+    || 'RADIO';
 }
+
 const createForm =
 async (req, res) => {
 
@@ -37,22 +36,10 @@ async (req, res) => {
           error:
             'Please login first'
         });
-
     }
-    const oauth2Client =
-      new google.auth.OAuth2(
-        process.env.CLIENT_ID,
-        process.env.CLIENT_SECRET,
-        process.env.REDIRECT_URI
-      );
-    oauth2Client
-      .setCredentials(
-        JSON.parse(token)
-      );
 
-    const auth =
-      oauth2Client;
     if (!text) {
+
       return res
         .status(400)
         .json({
@@ -60,19 +47,43 @@ async (req, res) => {
           error:
             'Questions are required'
         });
-
     }
+
+    const parsedToken =
+      JSON.parse(
+        decodeURIComponent(
+          token
+        )
+      );
+
+    console.log(
+      'User authenticated'
+    );
+
+    const oauth2Client =
+      new google.auth.OAuth2(
+        process.env.CLIENT_ID,
+        process.env.CLIENT_SECRET,
+        process.env.REDIRECT_URI
+      );
+
+    oauth2Client
+      .setCredentials(
+        parsedToken
+      );
+
+    const auth =
+      oauth2Client;
+
     const parsedQuestions =
       parseQuestions(text);
+
     const forms =
       google.forms({
         version: 'v1',
         auth
       });
-      console.log(
-  'TOKEN:',
-  JSON.parse(token)
-);
+
     const form =
       await forms.forms.create({
         requestBody: {
@@ -88,6 +99,7 @@ async (req, res) => {
 
     const googleType =
       getQuestionType(type);
+s
     const requests =
       parsedQuestions.map(
         (q, index) => ({
@@ -123,13 +135,16 @@ async (req, res) => {
           }
         })
       );
-    await forms.forms.batchUpdate({
-      formId,
+    await forms
+      .forms
+      .batchUpdate({
 
-      requestBody: {
-        requests
-      }
-    });
+        formId,
+
+        requestBody: {
+          requests
+        }
+      });
     res.json({
       success: true,
       formLink:
@@ -141,16 +156,17 @@ async (req, res) => {
 
     console.error(
       'Create form error:',
-      error
+      error.response?.data
+      || error
     );
 
     res.status(500)
-.json({
-  success: false,
-  error:
-    error.response?.data
-    || error.message
-});
+      .json({
+        success: false,
+        error:
+          error.response?.data
+          || error.message
+      });
   }
 };
 

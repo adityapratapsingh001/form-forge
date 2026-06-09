@@ -1,5 +1,7 @@
 const { google } =
 require('googleapis');
+
+// Login
 const login =
 (req, res) => {
 
@@ -21,12 +23,15 @@ const login =
           'consent',
 
         scope: [
-          'https://www.googleapis.com/auth/forms.body'
+          'https://www.googleapis.com/auth/forms.body',
+          'https://www.googleapis.com/auth/drive.file'
         ]
       });
 
   res.redirect(url);
 };
+
+// Callback
 const callback =
 async (req, res) => {
 
@@ -46,11 +51,15 @@ async (req, res) => {
       await oauth2Client
         .getToken(code);
 
-    // Encode token
     const encodedToken =
       encodeURIComponent(
         JSON.stringify(tokens)
       );
+
+    console.log(
+      'Login success'
+    );
+
     res.redirect(
       `/dashboard?token=${encodedToken}`
     );
@@ -68,6 +77,8 @@ async (req, res) => {
       );
   }
 };
+
+// Logout
 const logout =
 (req, res) => {
 
