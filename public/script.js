@@ -1,3 +1,11 @@
+const urlParams =
+new URLSearchParams(
+  window.location.search
+);
+
+const token =
+urlParams.get('token');
+
 const btn =
 document.getElementById(
   'generateBtn'
@@ -27,6 +35,15 @@ btn.addEventListener(
           'result'
         );
 
+    // Validation
+    if (!questions.trim()) {
+
+      result.innerHTML =
+        'Please enter questions';
+
+      return;
+    }
+
     result.innerHTML =
       'Creating form...';
 
@@ -40,15 +57,17 @@ btn.addEventListener(
 
             headers: {
               'Content-Type':
-              'application/json'
+                'application/json'
             },
 
             body:
               JSON.stringify({
                 text:
-                  questions,
+                  questions, // FIXED
 
-                type
+                type,
+
+                token
               })
           }
         );
@@ -70,12 +89,13 @@ btn.addEventListener(
       } else {
 
         result.innerHTML =
+          data.error ||
           'Error creating form';
       }
 
     } catch (error) {
 
-      console.log(error);
+      console.error(error);
 
       result.innerHTML =
         'Something went wrong';
