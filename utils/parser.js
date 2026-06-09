@@ -1,38 +1,54 @@
 function parseQuestions(text) {
 
   const blocks =
-    text.split('\n\n');
+    text
+      .trim()
+      .split(/\n\s*\n/);
 
-  const result = [];
+  const questions =
+    [];
 
-  blocks.forEach(block => {
+  for (const block of blocks) {
 
     const lines =
-      block.split('\n');
+      block
+        .split('\n')
+        .map(line =>
+          line.trim()
+        )
+        .filter(Boolean);
 
+    if (
+      lines.length < 2
+    ) continue;
+
+    // First line = question
     const question =
-      lines[0];
+      lines[0]
+        .replace(
+          /^\d+\.\s*/,
+          ''
+        );
 
+    // Remaining lines = options
     const options =
       lines
         .slice(1)
         .map(line =>
-          line
-            .replace(
-              /^[A-Z]\)/,
-              ''
-            )
-            .trim()
-        );
+          line.replace(
+            /^[A-D]\)\s*/,
+            ''
+          )
+        )
+        .filter(Boolean);
 
-    result.push({
+    questions.push({
       question,
       options
     });
+  }
 
-  });
-
-  return result;
+  return questions;
 }
 
 module.exports =
